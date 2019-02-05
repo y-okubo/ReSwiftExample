@@ -1,7 +1,8 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="11134" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14460.31" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11134"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14460.31"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -673,20 +674,47 @@
                         <outlet property="delegate" destination="Voe-Tx-rLC" id="PrD-fu-P6m"/>
                     </connections>
                 </application>
-                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModuleProvider="target"/>
+                <customObject id="Voe-Tx-rLC" customClass="AppDelegate" customModule="ReSwiftExample" customModuleProvider="target">
+                    <connections>
+                        <outlet property="statusItemMenu" destination="RWB-Dy-0aC" id="vbR-aw-HCz"/>
+                        <outlet property="statusItemMenuController" destination="NeX-ae-nr0" id="YVa-6n-JVD"/>
+                    </connections>
+                </customObject>
                 <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+                <menu autoenablesItems="NO" id="RWB-Dy-0aC" userLabel="Status Item Menu">
+                    <items>
+                        <menuItem title="マウント" id="OgK-4b-HgH">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="mount:" target="NeX-ae-nr0" id="Ugx-sf-Kcr"/>
+                            </connections>
+                        </menuItem>
+                        <menuItem isSeparatorItem="YES" id="ovI-Rz-fut"/>
+                        <menuItem title="ログイン" id="xv2-av-t7U">
+                            <modifierMask key="keyEquivalentModifierMask"/>
+                            <connections>
+                                <action selector="login:" target="NeX-ae-nr0" id="Gam-BK-cXT"/>
+                            </connections>
+                        </menuItem>
+                    </items>
+                </menu>
+                <customObject id="NeX-ae-nr0" userLabel="Status Item Menu Controller" customClass="StatusItemMenuController" customModule="ReSwiftExample" customModuleProvider="target">
+                    <connections>
+                        <outlet property="loginItem" destination="xv2-av-t7U" id="V2r-7l-eRF"/>
+                        <outlet property="mountItem" destination="OgK-4b-HgH" id="pyI-cV-mpf"/>
+                    </connections>
+                </customObject>
                 <customObject id="Ady-hI-5gd" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="75" y="0.0"/>
         </scene>
-        <!--Window Controller-->
+        <!--Login Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
-                        <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="196" y="240" width="480" height="270"/>
+                <windowController storyboardIdentifier="LoginWindowController" id="B8D-0N-5wS" userLabel="Login Window Controller" sceneMemberID="viewController">
+                    <window key="window" title="Login" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                        <windowStyleMask key="styleMask" titled="YES" closable="YES"/>
+                        <rect key="contentRect" x="196" y="240" width="400" height="225"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <connections>
                             <outlet property="delegate" destination="B8D-0N-5wS" id="98r-iN-zZc"/>
@@ -700,18 +728,103 @@
             </objects>
             <point key="canvasLocation" x="75" y="250"/>
         </scene>
-        <!--View Controller-->
+        <!--Login View Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
-                <viewController id="XfG-lQ-9wD" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="XfG-lQ-9wD" userLabel="Login View Controller" customClass="LoginViewController" customModule="ReSwiftExample" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
-                        <autoresizingMask key="autoresizingMask"/>
+                        <rect key="frame" x="0.0" y="0.0" width="400" height="225"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="nHS-fD-7bU">
+                                <rect key="frame" x="18" y="134" width="65" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="ユーザー名" id="6cy-WO-HTh">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="OfW-DF-8fv">
+                                <rect key="frame" x="18" y="102" width="65" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" title="パスワード" id="Aof-X7-pqp">
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="W0K-DF-Fc5">
+                                <rect key="frame" x="89" y="131" width="291" height="22"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" id="FEf-MC-eRK">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <allowedInputSourceLocales>
+                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                    </allowedInputSourceLocales>
+                                </textFieldCell>
+                            </textField>
+                            <secureTextField verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="ARj-Ji-3DH">
+                                <rect key="frame" x="89" y="99" width="291" height="22"/>
+                                <secureTextFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" title="debug" drawsBackground="YES" usesSingleLineMode="YES" id="6qr-l8-ydJ">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                    <allowedInputSourceLocales>
+                                        <string>NSAllRomanInputSourcesLocaleIdentifier</string>
+                                    </allowedInputSourceLocales>
+                                </secureTextFieldCell>
+                            </secureTextField>
+                            <button verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="AyP-TQ-f7Z">
+                                <rect key="frame" x="297" y="13" width="89" height="32"/>
+                                <buttonCell key="cell" type="push" title="ログイン" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Le4-DY-w6q">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" usesAppearanceFont="YES"/>
+                                    <connections>
+                                        <action selector="login:" target="XfG-lQ-9wD" id="Zi1-ya-ent"/>
+                                    </connections>
+                                </buttonCell>
+                            </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="CEr-aJ-9uP">
+                                <rect key="frame" x="18" y="74" width="364" height="17"/>
+                                <textFieldCell key="cell" lineBreakMode="clipping" alignment="right" title="messageLabel" id="Sxs-kb-Gjm">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="nHS-fD-7bU" firstAttribute="centerY" secondItem="W0K-DF-Fc5" secondAttribute="centerY" id="2se-LH-j9G"/>
+                            <constraint firstAttribute="trailing" secondItem="CEr-aJ-9uP" secondAttribute="trailing" constant="20" id="33O-ym-odh"/>
+                            <constraint firstItem="OfW-DF-8fv" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="3cx-HI-IbH"/>
+                            <constraint firstAttribute="trailing" secondItem="ARj-Ji-3DH" secondAttribute="trailing" constant="20" id="5d1-5n-OhV"/>
+                            <constraint firstItem="CEr-aJ-9uP" firstAttribute="top" secondItem="ARj-Ji-3DH" secondAttribute="bottom" constant="8" symbolic="YES" id="9ld-Jf-Wub"/>
+                            <constraint firstItem="ARj-Ji-3DH" firstAttribute="leading" secondItem="OfW-DF-8fv" secondAttribute="trailing" constant="8" id="BbC-V5-z9R"/>
+                            <constraint firstItem="ARj-Ji-3DH" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="104" id="Dhi-rQ-7qs"/>
+                            <constraint firstItem="W0K-DF-Fc5" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" constant="72" id="Lt8-w0-QZ8"/>
+                            <constraint firstItem="nHS-fD-7bU" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" symbolic="YES" id="Odl-qJ-qdS"/>
+                            <constraint firstAttribute="trailing" secondItem="W0K-DF-Fc5" secondAttribute="trailing" constant="20" id="RMD-cA-ktp"/>
+                            <constraint firstItem="ARj-Ji-3DH" firstAttribute="centerY" secondItem="OfW-DF-8fv" secondAttribute="centerY" id="Vy2-TG-EBy"/>
+                            <constraint firstAttribute="bottom" secondItem="AyP-TQ-f7Z" secondAttribute="bottom" constant="20" symbolic="YES" id="aEy-DT-7S4"/>
+                            <constraint firstItem="ARj-Ji-3DH" firstAttribute="trailing" secondItem="CEr-aJ-9uP" secondAttribute="trailing" id="apK-79-EAo"/>
+                            <constraint firstItem="ARj-Ji-3DH" firstAttribute="top" secondItem="W0K-DF-Fc5" secondAttribute="bottom" constant="10" symbolic="YES" id="c7L-e9-iZ5"/>
+                            <constraint firstItem="nHS-fD-7bU" firstAttribute="leading" secondItem="OfW-DF-8fv" secondAttribute="leading" id="cq8-bI-l4E"/>
+                            <constraint firstAttribute="trailing" secondItem="AyP-TQ-f7Z" secondAttribute="trailing" constant="20" id="dQv-fq-NGm"/>
+                            <constraint firstItem="nHS-fD-7bU" firstAttribute="leading" secondItem="CEr-aJ-9uP" secondAttribute="leading" id="os8-SL-K5M"/>
+                            <constraint firstItem="CEr-aJ-9uP" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" constant="20" id="tsu-hR-Ruu"/>
+                            <constraint firstItem="W0K-DF-Fc5" firstAttribute="leading" secondItem="nHS-fD-7bU" secondAttribute="trailing" constant="8" symbolic="YES" id="vNS-TX-KYb"/>
+                        </constraints>
                     </view>
+                    <connections>
+                        <outlet property="loginButton" destination="Le4-DY-w6q" id="puj-hR-TNN"/>
+                        <outlet property="messagesField" destination="CEr-aJ-9uP" id="6Na-JG-7CH"/>
+                        <outlet property="passwordField" destination="ARj-Ji-3DH" id="oEV-dR-Nhg"/>
+                        <outlet property="usernameField" destination="W0K-DF-Fc5" id="aA9-DM-LC6"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="75" y="655"/>
+            <point key="canvasLocation" x="75" y="654.5"/>
         </scene>
     </scenes>
 </document>
