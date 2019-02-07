@@ -17,7 +17,7 @@ struct ActionCreator {
             if let authenticationState = state.authenticationState, let _ = authenticationState.token {
                 return AuthenticationState.Action.logout()
             } else {
-                return AuthenticationState.Action.entered()
+                return AuthenticationState.Action.loginAttempt()
             }
         }
     }
@@ -32,7 +32,7 @@ struct ActionCreator {
                     return VolumeState.Action.mounting(path: mountPath)
                 }
             } else {
-                return AuthenticationState.Action.entered()
+                return AuthenticationState.Action.loginAttempt()
             }
         }
     }
@@ -44,7 +44,7 @@ struct ActionCreator {
             if let authenticationState = state.authenticationState, let _ = authenticationState.token {
                 return nil
             } else {
-                return AuthenticationState.Action.loggingIn()
+                return AuthenticationState.Action.loginProcess()
             }
         }
     }

@@ -18,8 +18,8 @@ struct AuthenticationState: StateType {
     var error: Error?
 
     enum Action: ReSwift.Action {
-        case entered()
-        case loggingIn()
+        case loginAttempt()
+        case loginProcess()
         case loginSuccess(token: String)
         case loginFailure(error: Error)
         case logout()
@@ -37,9 +37,9 @@ struct AuthenticationState: StateType {
         }
 
         switch action {
-        case .entered():
+        case .loginAttempt():
             newState.isChanged = true
-        case .loggingIn():
+        case .loginProcess():
             newState.isChanged = true
             newState.isProcessing = true
             newState.token = nil

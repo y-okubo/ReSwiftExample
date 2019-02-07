@@ -20,9 +20,9 @@ let middleware: Middleware<AppState> = { dispatch, getState in
             }
 
             switch action {
-            case .entered():
+            case .loginAttempt():
                 break
-            case .loggingIn():
+            case .loginProcess():
                 break
             case let .loginSuccess(token):
                 AppStore.shared.store.dispatch(ActionCreator.prepareMount(host: "localhost", port: 3000, mountPath: "/Users/Shared/Volume"))
