@@ -12,10 +12,11 @@ import ReSwift
 // Authentication state
 struct AuthenticationState: StateType {
 
-    var isChanged: Bool
-    var isProcessing: Bool
+    var changed: Bool
+    private var running: Bool
     var token: String?
     var error: Error?
+    var outline: Outline
 
     enum Action: ReSwift.Action {
         case loginAttempt()
@@ -25,11 +26,19 @@ struct AuthenticationState: StateType {
         case logout()
     }
 
+    enum Outline {
+        case s0
+        case s1
+        case s2
+        case s3
+        case s4
+    }
+
     public static func reducer(action: ReSwift.Action, state: AuthenticationState?) -> AuthenticationState {
-        var newState = state ?? AuthenticationState(isChanged: false, isProcessing: false, token: nil, error: nil)
+        var newState = state ?? AuthenticationState(changed: false, running: false, token: nil, error: nil, outline: .s0)
 
         // 変更済みフラグリセット
-        newState.isChanged = false
+        newState.changed = false
 
         // 関心がないアクションは処理しない
         guard let action = action as? AuthenticationState.Action else {
@@ -38,28 +47,38 @@ struct AuthenticationState: StateType {
 
         switch action {
         case .loginAttempt():
-            newState.isChanged = true
-        case .loginProcess():
-            newState.isChanged = true
-            newState.isProcessing = true
+            newState.changed = true
+            newState.running = false
             newState.token = nil
             newState.error = nil
+            newState.outline = .s1
+        case .loginProcess():
+            newState.changed = true
+            newState.running = true
+            newState.token = nil
+            newState.error = nil
+            newState.outline = .s2
         case let .loginSuccess(token):
-            newState.isChanged = true
-            newState.isProcessing = false
+            newState.changed = true
+            newState.running = false
             newState.token = token
             newState.error = nil
+            newState.outline = .s3
         case let .loginFailure(error):
-            newState.isChanged = true
-            newState.isProcessing = false
+            newState.changed = true
+            newState.running = false
             newState.token = nil
             newState.error = error
+            newState.outline = .s4
         case .logout:
-            newState.isChanged = true
-            newState.isProcessing = false
+            newState.changed = true
+            newState.running = false
             newState.token = nil
             newState.error = nil
+            newState.outline = .s0
         }
+
+        print("Current state: \(newState.outline)")
 
         return newState
     }

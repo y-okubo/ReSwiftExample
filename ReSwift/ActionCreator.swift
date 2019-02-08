@@ -37,6 +37,18 @@ struct ActionCreator {
         }
     }
 
+    // ログイン開始
+    static func attempLogin() -> Store<AppState>.ActionCreator {
+        return { (state, store) in
+            // 既にログイン済ならな何もしない
+            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
+                return nil
+            } else {
+                return AuthenticationState.Action.loginAttempt()
+            }
+        }
+    }
+
     // ログイン準備
     static func prepareLogin() -> Store<AppState>.ActionCreator {
         return { (state, store) in
@@ -139,6 +151,7 @@ struct ActionCreator {
 
     // 実際のログイン処理
     static private func requestLogin(username: String, password: String) -> AuthenticationState.Action {
+        Thread.sleep(forTimeInterval: 3.0)
         let semaphore = DispatchSemaphore(value: 0)
         var action: AuthenticationState.Action? = nil
         let task = URLSession.shared.dataTask(with: URL(string: "https://httpbin.org/status/200")!) { data, response, error in

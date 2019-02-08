@@ -115,23 +115,39 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
     }
 
     func handleAuthenticationState(authenticationState: AuthenticationState) {
-        if !authenticationState.isChanged {
+        if !authenticationState.changed {
             return
         }
 
-        // ログイン状態判定
-        if !authenticationState.isProcessing {
-            NSLog("💥 UPDATE LOGIN MENU 💥")
-            if let _ = authenticationState.token {
-                DispatchQueue.main.async {
-                    self.loginItem.title = "ログアウト"
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.mountItem.isEnabled = false
-                    self.loginItem.title = "ログイン"
-                    self.showLoginWindow()
-                }
+        NSLog("💥 UPDATE LOGIN MENU 💥")
+
+        switch authenticationState.outline {
+        case .s0:
+            DispatchQueue.main.async {
+                self.loginItem.isEnabled = true
+                self.loginItem.title = "ログイン"
+            }
+            AppStore.shared.store.dispatch(ActionCreator.attempLogin())
+        case .s1:
+            DispatchQueue.main.async {
+                self.loginItem.isEnabled = false
+                self.loginItem.title = "ログイン"
+                self.showLoginWindow()
+            }
+        case .s2:
+            DispatchQueue.main.async {
+                self.loginItem.isEnabled = false
+                self.loginItem.title = "ログイン中..."
+            }
+        case .s3:
+            DispatchQueue.main.async {
+                self.loginItem.isEnabled = true
+                self.loginItem.title = "ログアウト"
+            }
+        case .s4:
+            DispatchQueue.main.async {
+                self.loginItem.isEnabled = true
+                self.loginItem.title = "ログイン"
             }
         }
     }

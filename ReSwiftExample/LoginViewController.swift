@@ -49,38 +49,36 @@ class LoginViewController: NSViewController, StoreSubscriber {
             return
         }
 
-        if !authenticationState.isChanged {
+        if !authenticationState.changed {
             return
         }
 
-        if authenticationState.isProcessing {
-            // 処理中
+        switch authenticationState.outline {
+        case .s0, .s1:
+            break
+        case .s2:
             DispatchQueue.main.async {
                 self.messagesField.stringValue = "認証中..."
                 self.loginButton.isEnabled = false
             }
             // 次状態に遷移
             AppStore.shared.store.dispatch(ActionCreator.executeLogin(username: usernameField.stringValue, password: passwordField.stringValue))
-        } else {
-            // 処理完了
+        case .s3:
+            NSLog("😁 GET TOKEN 😁")
             DispatchQueue.main.async {
                 self.messagesField.stringValue = ""
                 self.loginButton.isEnabled = true
+                self.view.window!.close()
             }
-
-            if authenticationState.token != nil {
-                NSLog("😁 GET TOKEN 😁")
-                DispatchQueue.main.async {
-                    self.view.window!.close()
-                }
+        case .s4:
+            DispatchQueue.main.async {
+                self.messagesField.stringValue = "パスワードが違います"
+                self.loginButton.isEnabled = true
             }
-
-            if authenticationState.error != nil {
-                DispatchQueue.main.async {
-                    self.messagesField.stringValue = "パスワードが違います"
-                }
-            }
+            // 次状態に遷移（しなくても良いんだけど他の GUI がステートで制御されているので合わせる）
+            AppStore.shared.store.dispatch(ActionCreator.attempLogin())
         }
+
     }
 
 }
