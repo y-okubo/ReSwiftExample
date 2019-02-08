@@ -14,10 +14,10 @@ struct ActionCreator {
     // ログイン or ログアウト
     static func switchAuthenticationState() -> Store<AppState>.ActionCreator {
         return { (state, store) in
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
+            if let authenticationState = state.authenticationState, authenticationState.loggedIn() {
                 return AuthenticationState.Action.logout()
             } else {
-                return AuthenticationState.Action.loginAttempt()
+                return AuthenticationState.Action.loginEnter()
             }
         }
     }
@@ -25,38 +25,14 @@ struct ActionCreator {
     // マウント or アンマウント
     static func switchVolumeState(host: String, port: Int32, mountPath: String) -> Store<AppState>.ActionCreator {
         return { (state, store) in
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
+            if let authenticationState = state.authenticationState, authenticationState.loggedIn() {
                 if let volumeState = state.volumeState, let path = volumeState.path {
                     return VolumeState.Action.unmounting(path: path)
                 } else {
                     return VolumeState.Action.mounting(path: mountPath)
                 }
             } else {
-                return AuthenticationState.Action.loginAttempt()
-            }
-        }
-    }
-
-    // ログイン開始
-    static func attempLogin() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 既にログイン済ならな何もしない
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return nil
-            } else {
-                return AuthenticationState.Action.loginAttempt()
-            }
-        }
-    }
-
-    // ログイン準備
-    static func prepareLogin() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 既にログイン済ならな何もしない
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return nil
-            } else {
-                return AuthenticationState.Action.loginProcess()
+                return AuthenticationState.Action.loginEnter()
             }
         }
     }
@@ -70,18 +46,6 @@ struct ActionCreator {
         }
     }
 
-    // マウント準備
-    static func prepareMount(host: String, port: Int32, mountPath: String) -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 未ログインだとエラー
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return VolumeState.Action.mounting(path: mountPath)
-            } else {
-                return VolumeState.Action.mountFailure(error: VolumeState.LastActionError.mount(error: MountError.unauthorized))
-            }
-        }
-    }
-
     // マウント実行
     static func executeMount(host: String, port: Int32, mountPath: String) -> Store<AppState>.AsyncActionCreator {
         return { (state, store, callback) in
@@ -90,19 +54,7 @@ struct ActionCreator {
                     callback { _, _ in requestMount(host: host, port: port, token: token, mountPath: mountPath) }
                 }
             } else {
-                callback { _, _ in VolumeState.Action.mountFailure(error: VolumeState.LastActionError.mount(error: MountError.unauthorized)) }
-            }
-        }
-    }
-
-    // アンマウント準備
-    static func prepareUnmount() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 既にアンマウント済なら何もしない
-            if let volumeState = state.volumeState, let path = volumeState.path {
-                return VolumeState.Action.unmounting(path: path)
-            } else {
-                return nil
+                callback { _, _ in VolumeState.Action.mountFailure(error: MountError.unauthorized) }
             }
         }
     }
@@ -130,7 +82,7 @@ struct ActionCreator {
             return VolumeState.Action.mountSuccess(path: mountPath)
         } else {
             NSLog("Mount failure")
-            return VolumeState.Action.mountFailure(error: VolumeState.LastActionError.mount(error: MountError.unknown))
+            return VolumeState.Action.mountFailure(error: MountError.unknown)
         }
     }
 
@@ -145,7 +97,7 @@ struct ActionCreator {
             return VolumeState.Action.unmountSuccess(path: mountPath)
         } else {
             NSLog("Unmount failure")
-            return VolumeState.Action.unmountFailure(error: VolumeState.LastActionError.unmount(error: MountError.unknown))
+            return VolumeState.Action.unmountFailure(error: MountError.unknown)
         }
     }
 

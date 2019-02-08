@@ -38,7 +38,7 @@ class LoginViewController: NSViewController, StoreSubscriber {
     @IBAction func login(_ sender: Any) {
         NSLog("LoginViewController: login()")
 
-        AppStore.shared.store.dispatch(ActionCreator.prepareLogin())
+        AppStore.shared.store.dispatch(AuthenticationState.Action.loginStart(username: usernameField.stringValue, password: passwordField.stringValue))
     }
 
     // 状態処理
@@ -54,29 +54,33 @@ class LoginViewController: NSViewController, StoreSubscriber {
         }
 
         switch authenticationState.outline {
-        case .s0, .s1:
+        case .s0:
+            break
+        case .s1:
             break
         case .s2:
             DispatchQueue.main.async {
+                self.usernameField.isEnabled = false
+                self.passwordField.isEnabled = false
                 self.messagesField.stringValue = "認証中..."
                 self.loginButton.isEnabled = false
             }
-            // 次状態に遷移
-            AppStore.shared.store.dispatch(ActionCreator.executeLogin(username: usernameField.stringValue, password: passwordField.stringValue))
         case .s3:
             NSLog("😁 GET TOKEN 😁")
             DispatchQueue.main.async {
+                self.usernameField.isEnabled = false
+                self.passwordField.isEnabled = false
                 self.messagesField.stringValue = ""
                 self.loginButton.isEnabled = true
                 self.view.window!.close()
             }
         case .s4:
             DispatchQueue.main.async {
+                self.usernameField.isEnabled = true
+                self.passwordField.isEnabled = true
                 self.messagesField.stringValue = "パスワードが違います"
                 self.loginButton.isEnabled = true
             }
-            // 次状態に遷移（しなくても良いんだけど他の GUI がステートで制御されているので合わせる）
-            AppStore.shared.store.dispatch(ActionCreator.attempLogin())
         }
 
     }

@@ -20,7 +20,12 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         self.statusItem.menu = statusItemMenu
         statusItemMenuController.subscribe()
         // 起動時にキーチェーンから情報を読み出してログインさせることを想定
-        AppStore.shared.store.dispatch(ActionCreator.executeLogin(username: "debug", password: "debg"))
+        let useKeychain = true
+        if useKeychain {
+            AppStore.shared.store.dispatch(AuthenticationState.Action.loginStart(username: "debug", password: "debgg"))
+        } else {
+            AppStore.shared.store.dispatch(AuthenticationState.Action.loginEnter())
+        }
     }
 
     func applicationWillTerminate(_ aNotification: Notification) {

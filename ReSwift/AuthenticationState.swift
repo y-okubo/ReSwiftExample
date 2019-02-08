@@ -19,19 +19,23 @@ struct AuthenticationState: StateType {
     var outline: Outline
 
     enum Action: ReSwift.Action {
-        case loginAttempt()
-        case loginProcess()
+        case loginEnter()
+        case loginStart(username: String, password: String)
         case loginSuccess(token: String)
         case loginFailure(error: Error)
         case logout()
     }
 
     enum Outline {
-        case s0
-        case s1
-        case s2
-        case s3
-        case s4
+        case s0 // 初期状態（ログアウト状態）
+        case s1 // ログイン表示状態（ログアウト状態）
+        case s2 // ログイン処理状態
+        case s3 // ログイン成功状態
+        case s4 // ログイン失敗状態
+    }
+
+    public func loggedIn() -> Bool {
+        return !(token == nil)
     }
 
     public static func reducer(action: ReSwift.Action, state: AuthenticationState?) -> AuthenticationState {
@@ -46,13 +50,13 @@ struct AuthenticationState: StateType {
         }
 
         switch action {
-        case .loginAttempt():
+        case .loginEnter():
             newState.changed = true
             newState.running = false
             newState.token = nil
             newState.error = nil
             newState.outline = .s1
-        case .loginProcess():
+        case .loginStart(_, _):
             newState.changed = true
             newState.running = true
             newState.token = nil
@@ -78,7 +82,7 @@ struct AuthenticationState: StateType {
             newState.outline = .s0
         }
 
-        print("Current state: \(newState.outline)")
+        print("Current authentication state: \(newState.outline)")
 
         return newState
     }
