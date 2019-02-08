@@ -13,13 +13,14 @@ import ReSwift
 struct VolumeState: StateType {
 
     var changed: Bool
-    private var running: Bool
+    var running: Bool
     var type: ProcessingType?
     var path: String?
     var error: Error?
     var outline: Outline
 
     enum Action: ReSwift.Action {
+        case reset()
         case mounting(path: String)
         case mountSuccess(path: String)
         case mountFailure(error: Error)
@@ -28,14 +29,14 @@ struct VolumeState: StateType {
         case unmountFailure(error: Error)
     }
 
-    enum Outline {
-        case s0 // 初期状態
-        case s1 // マウント処理状態
-        case s2 // マウント成功状態
-        case s3 // マウント失敗状態
-        case s4 // アンマウント処理状態
-        case s5 // アンマウント成功状態
-        case s6 // アンマウント失敗状態
+    enum Outline: String {
+        case s0 = "初期状態"
+        case s1 = "マウント処理状態"
+        case s2 = "マウント成功状態"
+        case s3 = "マウント失敗状態"
+        case s4 = "アンマウント処理状態"
+        case s5 = "アンマウント成功状態"
+        case s6 = "アンマウント失敗状態"
     }
 
     enum ProcessingType {
@@ -59,6 +60,13 @@ struct VolumeState: StateType {
         }
 
         switch action {
+        case .reset():
+            newState.changed = true
+            newState.running = false
+            newState.type = nil
+            newState.path = nil
+            newState.error = nil
+            newState.outline = .s0
         case let .mounting(path):
             newState.changed = true
             newState.running = true
@@ -103,7 +111,7 @@ struct VolumeState: StateType {
             newState.outline = .s6
         }
 
-        print("Current volume state: \(newState.outline)")
+        NSLog("Current volume state: \(newState.outline.rawValue)")
 
         return newState
     }

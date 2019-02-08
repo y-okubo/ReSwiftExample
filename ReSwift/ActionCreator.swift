@@ -93,10 +93,8 @@ struct ActionCreator {
             DispatchQueue.global(qos: .default).async {
                 requestLogin(username: username, password: password, callback: { token, error in
                     if let error = error {
-                        print("failure")
                         callback { _, _ in AuthenticationState.Action.loginFailure(error: error) }
                     } else {
-                        print("success")
                         store.dispatch(AuthenticationState.Action.loginSuccess(token: token))
                         store.dispatch(VolumeState.Action.mounting(path: self.path))
                         if requestMount(host: self.host, port: self.port, token: token, path: self.path) {

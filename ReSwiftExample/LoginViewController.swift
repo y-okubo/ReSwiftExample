@@ -19,8 +19,6 @@ class LoginViewController: NSViewController, StoreSubscriber {
     override func viewWillAppear() {
         super.viewWillAppear()
 
-        messagesField.stringValue = "Password is \"debug\""
-
         // 通知するステータスを限定している
         AppStore.shared.store.subscribe(self) { subcription in subcription
             .select { state in
@@ -54,10 +52,13 @@ class LoginViewController: NSViewController, StoreSubscriber {
         }
 
         switch authenticationState.outline {
-        case .s0:
-            break
-        case .s1:
-            break
+        case .s0, .s1:
+            DispatchQueue.main.async {
+                self.usernameField.isEnabled = true
+                self.passwordField.isEnabled = true
+                self.messagesField.stringValue = "Password is \"debug\""
+                self.loginButton.isEnabled = true
+            }
         case .s2:
             DispatchQueue.main.async {
                 self.usernameField.isEnabled = false

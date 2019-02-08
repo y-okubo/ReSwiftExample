@@ -111,28 +111,33 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = true
                 self.loginItem.title = "ログイン"
+                self.mountItem.isEnabled = false
 //                self.showLoginWindow() // ログアウトへの状態遷移でログインウインドウを表示させるならコメント外す
             }
         case .s1:
             DispatchQueue.main.async {
-                self.loginItem.isEnabled = false
+                self.loginItem.isEnabled = true
                 self.loginItem.title = "ログイン"
+                self.mountItem.isEnabled = false
                 self.showLoginWindow()
             }
         case .s2:
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = false
                 self.loginItem.title = "ログイン中..."
+                self.mountItem.isEnabled = false
             }
         case .s3:
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = true
                 self.loginItem.title = "ログアウト"
+                self.mountItem.isEnabled = true
             }
         case .s4:
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = true
                 self.loginItem.title = "ログイン"
+                self.mountItem.isEnabled = false
             }
         }
     }

@@ -13,12 +13,13 @@ import ReSwift
 struct AuthenticationState: StateType {
 
     var changed: Bool
-    private var running: Bool
+    var running: Bool
     var token: String?
     var error: Error?
     var outline: Outline
 
     enum Action: ReSwift.Action {
+        case reset()
         case loginEnter()
         case loginStart(username: String, password: String)
         case loginSuccess(token: String)
@@ -26,12 +27,12 @@ struct AuthenticationState: StateType {
         case logout()
     }
 
-    enum Outline {
-        case s0 // 初期状態（ログアウト状態）
-        case s1 // ログイン表示状態（ログアウト状態）
-        case s2 // ログイン処理状態
-        case s3 // ログイン成功状態
-        case s4 // ログイン失敗状態
+    enum Outline: String {
+        case s0 = "初期状態（ログアウト状態）"
+        case s1 = "ログイン表示状態（ログアウト状態）"
+        case s2 = "ログイン処理状態"
+        case s3 = "ログイン成功状態"
+        case s4 = "ログイン失敗状態"
     }
 
     public func loggedIn() -> Bool {
@@ -50,6 +51,12 @@ struct AuthenticationState: StateType {
         }
 
         switch action {
+        case .reset():
+            newState.changed = true
+            newState.running = false
+            newState.token = nil
+            newState.error = nil
+            newState.outline = .s0
         case .loginEnter():
             newState.changed = true
             newState.running = false
@@ -82,7 +89,7 @@ struct AuthenticationState: StateType {
             newState.outline = .s0
         }
 
-        print("Current authentication state: \(newState.outline)")
+        NSLog("Current authentication state: \(newState.outline.rawValue)")
 
         return newState
     }
