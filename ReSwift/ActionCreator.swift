@@ -27,7 +27,7 @@ struct ActionCreator {
                 store.dispatch(AuthenticationState.Action.logout())
                 if !volumeState.mounted {
                     // マウントしていないなら何もしない
-                    return callback { _, _ in nil }
+                    return callback { _, _ in AuthenticationState.Action.logout() }
                 }
 
                 // 非同期でアンマウント
