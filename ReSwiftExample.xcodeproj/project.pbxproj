@@ -12,7 +12,6 @@
 		062ACE4D220BEE75007BFFAD /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE837822092BEB0002EB8C /* AppState.swift */; };
 		062ACE4E220BEE78007BFFAD /* AuthenticationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE837A22092BEB0002EB8C /* AuthenticationState.swift */; };
 		062ACE4F220BEE7A007BFFAD /* VolumeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE837922092BEB0002EB8C /* VolumeState.swift */; };
-		062ACE50220BEE7D007BFFAD /* Middleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE8388220990EE0002EB8C /* Middleware.swift */; };
 		062ACE51220BEE99007BFFAD /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE838022092CF00002EB8C /* Error.swift */; };
 		069CDCB3220922EA00DE0F03 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069CDCB2220922EA00DE0F03 /* AppDelegate.swift */; };
 		069CDCB5220922EA00DE0F03 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069CDCB4220922EA00DE0F03 /* LoginViewController.swift */; };
@@ -24,7 +23,6 @@
 		06AE837E22092C780002EB8C /* AuthenticationState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE837A22092BEB0002EB8C /* AuthenticationState.swift */; };
 		06AE837F22092C780002EB8C /* ActionCreator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE837B22092BEB0002EB8C /* ActionCreator.swift */; };
 		06AE838122092CF00002EB8C /* Error.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE838022092CF00002EB8C /* Error.swift */; };
-		06AE8389220990EE0002EB8C /* Middleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06AE8388220990EE0002EB8C /* Middleware.swift */; };
 		2EEBD0B3CA9A3FA4A9380E37 /* Pods_ReSwiftExampleTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A3C8C0E0A1CE478403F10D2 /* Pods_ReSwiftExampleTests.framework */; };
 		B5D1613AEE9DC6D0227A2FF7 /* Pods_ReSwiftExample.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BAEFA9EDE045DA02E61E7B58 /* Pods_ReSwiftExample.framework */; };
 /* End PBXBuildFile section */
@@ -57,7 +55,6 @@
 		06AE837A22092BEB0002EB8C /* AuthenticationState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationState.swift; sourceTree = "<group>"; };
 		06AE837B22092BEB0002EB8C /* ActionCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionCreator.swift; sourceTree = "<group>"; };
 		06AE838022092CF00002EB8C /* Error.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Error.swift; sourceTree = "<group>"; };
-		06AE8388220990EE0002EB8C /* Middleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Middleware.swift; sourceTree = "<group>"; };
 		0A3C8C0E0A1CE478403F10D2 /* Pods_ReSwiftExampleTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReSwiftExampleTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		34DF47FBE3EB7865558FE83A /* Pods-ReSwiftExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReSwiftExample.debug.xcconfig"; path = "Target Support Files/Pods-ReSwiftExample/Pods-ReSwiftExample.debug.xcconfig"; sourceTree = "<group>"; };
 		64E130200347057A6C2A570E /* Pods-ReSwiftExampleTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ReSwiftExampleTests.release.xcconfig"; path = "Target Support Files/Pods-ReSwiftExampleTests/Pods-ReSwiftExampleTests.release.xcconfig"; sourceTree = "<group>"; };
@@ -137,7 +134,6 @@
 				06AE837822092BEB0002EB8C /* AppState.swift */,
 				06AE837A22092BEB0002EB8C /* AuthenticationState.swift */,
 				06AE837922092BEB0002EB8C /* VolumeState.swift */,
-				06AE8388220990EE0002EB8C /* Middleware.swift */,
 			);
 			path = ReSwift;
 			sourceTree = "<group>";
@@ -368,7 +364,6 @@
 				062ACE4D220BEE75007BFFAD /* AppState.swift in Sources */,
 				062ACE4E220BEE78007BFFAD /* AuthenticationState.swift in Sources */,
 				062ACE4C220BEE73007BFFAD /* ActionCreator.swift in Sources */,
-				062ACE50220BEE7D007BFFAD /* Middleware.swift in Sources */,
 				062ACE4F220BEE7A007BFFAD /* VolumeState.swift in Sources */,
 				062ACE51220BEE99007BFFAD /* Error.swift in Sources */,
 				0623F7B4220BCCFA00628AC2 /* ReSwiftExampleTests.swift in Sources */,
@@ -379,7 +374,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				06AE8389220990EE0002EB8C /* Middleware.swift in Sources */,
 				06AE838122092CF00002EB8C /* Error.swift in Sources */,
 				06AE837C22092C780002EB8C /* AppState.swift in Sources */,
 				06AE837D22092C780002EB8C /* VolumeState.swift in Sources */,

@@ -34,26 +34,26 @@ class ReSwiftExampleTests: XCTestCase {
     func testLoginSuccess() {
         self.stab.delegate = { state in
             guard let authenticationState = state.authenticationState else { return }
-            if authenticationState.isChanged && !authenticationState.isProcessing {
+            if authenticationState.changed && !authenticationState.running {
                 self.expect.fulfill()
                 XCTAssertNotNil(authenticationState.token)
             }
         }
 
-        store.dispatch(ActionCreator.executeLogin(username: "tester", password: "debug"))
+        store.dispatch(ActionCreator.startLogin(username: "tester", password: "debug"))
         wait(for: [self.expect], timeout: 10.0)
     }
 
     func testLoginFailure() {
         self.stab.delegate = { state in
             guard let authenticationState = state.authenticationState else { return }
-            if authenticationState.isChanged && !authenticationState.isProcessing {
+            if authenticationState.changed && !authenticationState.running {
                 self.expect.fulfill()
                 XCTAssertNil(authenticationState.token)
             }
         }
 
-        store.dispatch(ActionCreator.executeLogin(username: "tester", password: "faild"))
+        store.dispatch(ActionCreator.startLogin(username: "tester", password: "faild"))
         wait(for: [self.expect], timeout: 10.0)
     }
 
@@ -67,7 +67,7 @@ class ReSwiftExampleTests: XCTestCase {
             }
         }
 
-        store.dispatch(ActionCreator.executeLogin(username: "tester", password: "debug"))
+        store.dispatch(ActionCreator.startLogin(username: "tester", password: "debug"))
         wait(for: [self.expect], timeout: 10.0)
     }
 

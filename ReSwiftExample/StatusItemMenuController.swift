@@ -26,7 +26,7 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
 
     @IBAction func mount(_ sender: Any) {
         NSLog("StatusItemMenuController: mount()")
-        AppStore.shared.store.dispatch(ActionCreator.switchVolumeState(host: "localhost", port: 3000, mountPath: "/Users/Shared/Volume"))
+        AppStore.shared.store.dispatch(ActionCreator.switchVolumeState())
     }
 
     @IBAction func login(_ sender: Any) {
@@ -47,69 +47,54 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
     }
 
     func handleVolumeState(volumeState: VolumeState) {
-        if !volumeState.isChanged {
+        if !volumeState.changed {
             return
         }
 
-        // マウント状態判定
-        if let type = volumeState.type {
-            NSLog("⚙️ VOLUME PROCESSING ... ⚙️")
-            // 処理中の表示処理
-            switch type {
-            case .mount:
-                DispatchQueue.main.async {
-                    self.mountItem.title = "マウント中..."
-                    self.mountItem.isEnabled = false
-                }
-                // 次状態に遷移
-                AppStore.shared.store.dispatch(ActionCreator.executeMount(host: "localhost", port: 3000, mountPath: "/Users/Shared/Volume"))
-            case .unmount:
-                DispatchQueue.main.async {
-                    self.mountItem.title = "アンマウント中..."
-                    self.mountItem.isEnabled = false
-                }
-                // 次状態に遷移
-                AppStore.shared.store.dispatch(ActionCreator.executeUnmount())
-            }
-        } else {
-            NSLog("🙆‍♂️ VOLUME PROCESS FINISH 🙆‍♂️")
-            // 処理完了の表示処理
-            if let _ = volumeState.path {
-                DispatchQueue.main.async {
-                    self.mountItem.title = "アンマウント"
-                    self.mountItem.isEnabled = true
-                }
-            } else {
-                DispatchQueue.main.async {
-                    self.mountItem.title = "マウント"
-                    self.mountItem.isEnabled = true
-                }
-            }
+        NSLog("💥 UPDATE MOUNT MENU 💥")
 
-            // エラーがある場合の表示処理
-            if let error = volumeState.error {
-                switch error {
-                case let .mount(error):
-                    NSLog("StatusItemMenuController: \(error.localizedDescription)")
-                    DispatchQueue.main.async {
-                        let alert: NSAlert = NSAlert()
-                        alert.messageText = "マウントエラー"
-                        alert.informativeText = "マウントに失敗しました。"
-                        alert.alertStyle = NSAlert.Style.critical
-                        alert.addButton(withTitle: "OK")
-                        alert.runModal()
-                    }
-                case let .unmount(error):
-                    NSLog("StatusItemMenuController: \(error.localizedDescription)")
-                    DispatchQueue.main.async {
-                        let alert: NSAlert = NSAlert()
-                        alert.messageText = "アンマウントエラー"
-                        alert.informativeText = "アンマウントに失敗しました。"
-                        alert.alertStyle = NSAlert.Style.critical
-                        alert.addButton(withTitle: "OK")
-                        alert.runModal()
-                    }
-                }
+        switch volumeState.outline {
+        case .s0:
+            break
+        case .s1:
+            DispatchQueue.main.async {
+                self.mountItem.title = "マウント中..."
+                self.mountItem.isEnabled = false
+            }
+        case .s2:
+            DispatchQueue.main.async {
+                self.mountItem.title = "アンマウント"
+                self.mountItem.isEnabled = true
+            }
+        case .s3:
+            NSLog("StatusItemMenuController: \(volumeState.error!.localizedDescription)")
+            DispatchQueue.main.async {
+                let alert: NSAlert = NSAlert()
+                alert.messageText = "マウントエラー"
+                alert.informativeText = "マウントに失敗しました。"
+                alert.alertStyle = NSAlert.Style.critical
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
+            }
+        case .s4:
+            DispatchQueue.main.async {
+                self.mountItem.title = "アンマウント中..."
+                self.mountItem.isEnabled = false
+            }
+        case .s5:
+            DispatchQueue.main.async {
+                self.mountItem.title = "マウント"
+                self.mountItem.isEnabled = true
+            }
+        case .s6:
+            NSLog("StatusItemMenuController: \(volumeState.error!.localizedDescription)")
+            DispatchQueue.main.async {
+                let alert: NSAlert = NSAlert()
+                alert.messageText = "アンマウントエラー"
+                alert.informativeText = "アンマウントに失敗しました。"
+                alert.alertStyle = NSAlert.Style.critical
+                alert.addButton(withTitle: "OK")
+                alert.runModal()
             }
         }
     }
@@ -126,28 +111,33 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = true
                 self.loginItem.title = "ログイン"
+                self.mountItem.isEnabled = false
+//                self.showLoginWindow() // ログアウトへの状態遷移でログインウインドウを表示させるならコメント外す
             }
-            AppStore.shared.store.dispatch(ActionCreator.attempLogin())
         case .s1:
             DispatchQueue.main.async {
-                self.loginItem.isEnabled = false
+                self.loginItem.isEnabled = true
                 self.loginItem.title = "ログイン"
+                self.mountItem.isEnabled = false
                 self.showLoginWindow()
             }
         case .s2:
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = false
                 self.loginItem.title = "ログイン中..."
+                self.mountItem.isEnabled = false
             }
         case .s3:
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = true
                 self.loginItem.title = "ログアウト"
+                self.mountItem.isEnabled = true
             }
         case .s4:
             DispatchQueue.main.async {
                 self.loginItem.isEnabled = true
                 self.loginItem.title = "ログイン"
+                self.mountItem.isEnabled = false
             }
         }
     }

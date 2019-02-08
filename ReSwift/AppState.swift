@@ -13,7 +13,7 @@ class AppStore: NSObject {
     let store = Store<AppState>(
         reducer: AppState.reducer,
         state: nil,
-        middleware: [middleware]
+        middleware: []
     )
 
     static let shared: AppStore = AppStore()

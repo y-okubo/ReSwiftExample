@@ -11,173 +11,154 @@ import ReSwift
 
 struct ActionCreator {
 
+    static let path = "/Users/Shared/Volume"
+    static let host = "localhost"
+    static let port: Int32 = 3000
+
     // ログイン or ログアウト
-    static func switchAuthenticationState() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return AuthenticationState.Action.logout()
+    static func switchAuthenticationState() -> Store<AppState>.AsyncActionCreator {
+        return { (state, store, callback) in
+            guard let authenticationState = state.authenticationState, let volumeState = state.volumeState else {
+                return callback { _, _ in nil }
+            }
+
+            if authenticationState.loggedIn() {
+                // ログインしているならログアウト
+                store.dispatch(AuthenticationState.Action.logout())
+                if !volumeState.mounted() {
+                    // マウントしていないなら何もしない
+                    return callback { _, _ in nil }
+                }
+
+                // 非同期でアンマウント
+                DispatchQueue.global(qos: .default).async {
+                    store.dispatch(VolumeState.Action.unmounting(path: self.path))
+                    if requestUnmount(path: self.path) {
+                        callback { _, _ in VolumeState.Action.unmountSuccess(path: self.path) }
+                    } else {
+                        callback { _, _ in VolumeState.Action.unmountFailure(error: MountError.unauthorized) }
+                    }
+                }
             } else {
-                return AuthenticationState.Action.loginAttempt()
+                // ログインしていないなら
+                callback { _, _ in AuthenticationState.Action.loginEnter() }
             }
         }
     }
 
     // マウント or アンマウント
-    static func switchVolumeState(host: String, port: Int32, mountPath: String) -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                if let volumeState = state.volumeState, let path = volumeState.path {
-                    return VolumeState.Action.unmounting(path: path)
-                } else {
-                    return VolumeState.Action.mounting(path: mountPath)
+    static func switchVolumeState() -> Store<AppState>.AsyncActionCreator {
+        return { (state, store, callback) in
+            guard let authenticationState = state.authenticationState, let volumeState = state.volumeState else {
+                return callback { _, _ in nil }
+            }
+
+            guard let token = authenticationState.token else {
+                return callback { _, _ in nil }
+            }
+
+            if !authenticationState.loggedIn() {
+                // ログインをしていない
+                return callback { _, _ in AuthenticationState.Action.loginEnter() }
+            }
+
+            if volumeState.mounted() {
+                // マウント中ならアンマウント
+                store.dispatch(VolumeState.Action.unmounting(path: path))
+                DispatchQueue.global(qos: .default).async {
+                    if requestUnmount(path: path) {
+                        callback { _, _ in VolumeState.Action.unmountSuccess(path: path) }
+                    } else {
+                        callback { _, _ in VolumeState.Action.unmountFailure(error: MountError.unauthorized) }
+                    }
                 }
             } else {
-                return AuthenticationState.Action.loginAttempt()
-            }
-        }
-    }
-
-    // ログイン開始
-    static func attempLogin() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 既にログイン済ならな何もしない
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return nil
-            } else {
-                return AuthenticationState.Action.loginAttempt()
-            }
-        }
-    }
-
-    // ログイン準備
-    static func prepareLogin() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 既にログイン済ならな何もしない
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return nil
-            } else {
-                return AuthenticationState.Action.loginProcess()
+                // アンマウント中ならマウント
+                store.dispatch(VolumeState.Action.mounting(path: path))
+                DispatchQueue.global(qos: .default).async {
+                    if requestMount(host: self.host, port: self.port, token: token, path: path) {
+                        callback { _, _ in VolumeState.Action.mountSuccess(path: path) }
+                    } else {
+                        callback { _, _ in VolumeState.Action.mountFailure(error: MountError.unauthorized) }
+                    }
+                }
             }
         }
     }
 
     // ログイン実行
-    static func executeLogin(username: String, password: String) -> Store<AppState>.AsyncActionCreator {
+    static func startLogin(username: String, password: String) -> Store<AppState>.AsyncActionCreator {
         return { (state, store, callback) in
+            store.dispatch(AuthenticationState.Action.loginStart(username: username, password: password))
             DispatchQueue.global(qos: .default).async {
-                callback { _, _ in requestLogin(username: username, password: password) }
-            }
-        }
-    }
-
-    // マウント準備
-    static func prepareMount(host: String, port: Int32, mountPath: String) -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 未ログインだとエラー
-            if let authenticationState = state.authenticationState, let _ = authenticationState.token {
-                return VolumeState.Action.mounting(path: mountPath)
-            } else {
-                return VolumeState.Action.mountFailure(error: VolumeState.LastActionError.mount(error: MountError.unauthorized))
-            }
-        }
-    }
-
-    // マウント実行
-    static func executeMount(host: String, port: Int32, mountPath: String) -> Store<AppState>.AsyncActionCreator {
-        return { (state, store, callback) in
-            if let authenticationState = state.authenticationState, let token = authenticationState.token {
-                DispatchQueue.global(qos: .default).async {
-                    callback { _, _ in requestMount(host: host, port: port, token: token, mountPath: mountPath) }
-                }
-            } else {
-                callback { _, _ in VolumeState.Action.mountFailure(error: VolumeState.LastActionError.mount(error: MountError.unauthorized)) }
-            }
-        }
-    }
-
-    // アンマウント準備
-    static func prepareUnmount() -> Store<AppState>.ActionCreator {
-        return { (state, store) in
-            // 既にアンマウント済なら何もしない
-            if let volumeState = state.volumeState, let path = volumeState.path {
-                return VolumeState.Action.unmounting(path: path)
-            } else {
-                return nil
-            }
-        }
-    }
-
-    // アンマウント実行
-    static func executeUnmount() -> Store<AppState>.AsyncActionCreator {
-        return { (state, store, callback) in
-            // 既にアンマウント済なら何もしない
-            if let volumeState = state.volumeState, let path = volumeState.path {
-                DispatchQueue.global(qos: .default).async {
-                    callback { _, _ in requestUnmount(mountPath: path) }
-                }
+                requestLogin(username: username, password: password, callback: { token, error in
+                    if let error = error {
+                        callback { _, _ in AuthenticationState.Action.loginFailure(error: error) }
+                    } else {
+                        store.dispatch(AuthenticationState.Action.loginSuccess(token: token))
+                        store.dispatch(VolumeState.Action.mounting(path: self.path))
+                        if requestMount(host: self.host, port: self.port, token: token, path: self.path) {
+                            callback { _, _ in VolumeState.Action.mountSuccess(path: self.path) }
+                        } else {
+                            callback { _, _ in VolumeState.Action.mountFailure(error: MountError.unauthorized) }
+                        }
+                    }
+                })
             }
         }
     }
 
     // 実際のマウント処理
-    static private func requestMount(host: String, port: Int32, token: String, mountPath: String) -> VolumeState.Action {
+    static private func requestMount(host: String, port: Int32, token: String, path: String) -> Bool {
         NSLog("Mounting...")
         Thread.sleep(forTimeInterval: 3.0)
 
         // 適度に成功・失敗しそうな頻度を再現
         if Int.random(in: 1 ... 100) % 1 == 0 {
             NSLog("Mount success")
-            return VolumeState.Action.mountSuccess(path: mountPath)
+            return true
         } else {
             NSLog("Mount failure")
-            return VolumeState.Action.mountFailure(error: VolumeState.LastActionError.mount(error: MountError.unknown))
+            return false
         }
     }
 
     // 実際のアンマウント処理
-    static private func requestUnmount(mountPath: String) -> VolumeState.Action {
+    static private func requestUnmount(path: String) -> Bool {
         NSLog("Unmounting...")
         Thread.sleep(forTimeInterval: 3.0)
 
         // 適度に成功・失敗しそうな頻度を再現
         if Int.random(in: 1 ... 100) % 1 == 0 {
             NSLog("Unmount success")
-            return VolumeState.Action.unmountSuccess(path: mountPath)
+            return true
         } else {
             NSLog("Unmount failure")
-            return VolumeState.Action.unmountFailure(error: VolumeState.LastActionError.unmount(error: MountError.unknown))
+            return false
         }
     }
 
     // 実際のログイン処理
-    static private func requestLogin(username: String, password: String) -> AuthenticationState.Action {
-        Thread.sleep(forTimeInterval: 3.0)
-        let semaphore = DispatchSemaphore(value: 0)
-        var action: AuthenticationState.Action? = nil
+    static private func requestLogin(username: String, password: String, callback: @escaping((String, Error?) -> Void)) {
+        Thread.sleep(forTimeInterval: 2.0)
         let task = URLSession.shared.dataTask(with: URL(string: "https://httpbin.org/status/200")!) { data, response, error in
             guard let response = response as? HTTPURLResponse else {
-                action = AuthenticationState.Action.loginFailure(error: ServerError.unknown)
-                semaphore.signal()
                 return
             }
 
             // 関数渡してあげるから適切な引数を渡して呼び出してな
             if response.statusCode != 200 || password != "debug"{
                 NSLog("Login failure")
-                action = AuthenticationState.Action.loginFailure(error: ServerError.notFound)
+                callback("", ServerError.notFound)
             } else if let error = error {
                 NSLog("Login failure")
-                action = AuthenticationState.Action.loginFailure(error: error)
+                callback("", error)
             } else {
                 NSLog("Login success")
-                action = AuthenticationState.Action.loginSuccess(token: "THIS_IS_TOKEN")
+                callback("THIS_IS_TOKEN", nil)
             }
-            semaphore.signal()
         }
         task.resume()
-        semaphore.wait()
-
-        return action!
     }
 
 }
