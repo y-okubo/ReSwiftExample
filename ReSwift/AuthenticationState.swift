@@ -17,6 +17,11 @@ struct AuthenticationState: StateType {
     var token: String?
     var error: Error?
     var outline: Outline
+    var loggedIn: Bool {
+        get {
+            return !(token == nil)
+        }
+    }
 
     enum Action: ReSwift.Action {
         case reset()
@@ -33,10 +38,6 @@ struct AuthenticationState: StateType {
         case s2 = "ログイン処理状態"
         case s3 = "ログイン成功状態"
         case s4 = "ログイン失敗状態"
-    }
-
-    public func loggedIn() -> Bool {
-        return !(token == nil)
     }
 
     public static func reducer(action: ReSwift.Action, state: AuthenticationState?) -> AuthenticationState {

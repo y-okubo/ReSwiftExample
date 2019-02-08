@@ -18,6 +18,11 @@ struct VolumeState: StateType {
     var path: String?
     var error: Error?
     var outline: Outline
+    var mounted: Bool {
+        get {
+            return !(path == nil)
+        }
+    }
 
     enum Action: ReSwift.Action {
         case reset()
@@ -42,10 +47,6 @@ struct VolumeState: StateType {
     enum ProcessingType {
         case mount
         case unmount
-    }
-
-    public func mounted() -> Bool {
-        return !(path == nil)
     }
 
     public static func reducer(action: ReSwift.Action, state: VolumeState?) -> VolumeState {

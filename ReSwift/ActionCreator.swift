@@ -22,10 +22,10 @@ struct ActionCreator {
                 return callback { _, _ in nil }
             }
 
-            if authenticationState.loggedIn() {
+            if authenticationState.loggedIn {
                 // ログインしているならログアウト
                 store.dispatch(AuthenticationState.Action.logout())
-                if !volumeState.mounted() {
+                if !volumeState.mounted {
                     // マウントしていないなら何もしない
                     return callback { _, _ in nil }
                 }
@@ -57,12 +57,12 @@ struct ActionCreator {
                 return callback { _, _ in nil }
             }
 
-            if !authenticationState.loggedIn() {
+            if !authenticationState.loggedIn {
                 // ログインをしていない
                 return callback { _, _ in AuthenticationState.Action.loginEnter() }
             }
 
-            if volumeState.mounted() {
+            if volumeState.mounted {
                 // マウント中ならアンマウント
                 store.dispatch(VolumeState.Action.unmounting(path: path))
                 DispatchQueue.global(qos: .default).async {
