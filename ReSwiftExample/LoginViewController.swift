@@ -38,7 +38,7 @@ class LoginViewController: NSViewController, StoreSubscriber {
     @IBAction func login(_ sender: Any) {
         NSLog("LoginViewController: login()")
 
-        AppStore.shared.store.dispatch(AuthenticationState.Action.loginStart(username: usernameField.stringValue, password: passwordField.stringValue))
+        AppStore.shared.store.dispatch(ActionCreator.startLogin(username: usernameField.stringValue, password: passwordField.stringValue))
     }
 
     // 状態処理

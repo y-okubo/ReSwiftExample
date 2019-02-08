@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 起動時にキーチェーンから情報を読み出してログインさせることを想定
         let useKeychain = true
         if useKeychain {
-            AppStore.shared.store.dispatch(AuthenticationState.Action.loginStart(username: "debug", password: "debgg"))
+            AppStore.shared.store.dispatch(ActionCreator.startLogin(username: "debug", password: "debug"))
         } else {
             AppStore.shared.store.dispatch(AuthenticationState.Action.loginEnter())
         }

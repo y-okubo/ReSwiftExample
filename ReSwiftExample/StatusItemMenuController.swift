@@ -26,7 +26,7 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
 
     @IBAction func mount(_ sender: Any) {
         NSLog("StatusItemMenuController: mount()")
-        AppStore.shared.store.dispatch(ActionCreator.switchVolumeState(host: "localhost", port: 3000, mountPath: "/Users/Shared/Volume"))
+        AppStore.shared.store.dispatch(ActionCreator.switchVolumeState())
     }
 
     @IBAction func login(_ sender: Any) {
@@ -61,8 +61,6 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
                 self.mountItem.title = "マウント中..."
                 self.mountItem.isEnabled = false
             }
-            // 次状態に遷移
-            AppStore.shared.store.dispatch(ActionCreator.executeMount(host: "localhost", port: 3000, mountPath: "/Users/Shared/Volume"))
         case .s2:
             DispatchQueue.main.async {
                 self.mountItem.title = "アンマウント"
@@ -83,8 +81,6 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
                 self.mountItem.title = "アンマウント中..."
                 self.mountItem.isEnabled = false
             }
-            // 次状態に遷移
-            AppStore.shared.store.dispatch(ActionCreator.executeUnmount())
         case .s5:
             DispatchQueue.main.async {
                 self.mountItem.title = "マウント"
