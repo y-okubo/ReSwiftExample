@@ -51,7 +51,7 @@ class StatusItemMenuController: NSObject, StoreSubscriber {
             return
         }
 
-        NSLog("⚙️ UPDATE PROCESSING MENU ⚙️")
+        NSLog("💥 UPDATE MOUNT MENU 💥")
 
         switch volumeState.outline {
         case .s0:

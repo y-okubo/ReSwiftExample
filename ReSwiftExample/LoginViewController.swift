@@ -67,7 +67,6 @@ class LoginViewController: NSViewController, StoreSubscriber {
                 self.loginButton.isEnabled = false
             }
         case .s3:
-            NSLog("😁 GET TOKEN 😁")
             DispatchQueue.main.async {
                 self.usernameField.isEnabled = false
                 self.passwordField.isEnabled = false

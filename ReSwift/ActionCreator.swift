@@ -140,7 +140,7 @@ struct ActionCreator {
 
     // 実際のログイン処理
     static private func requestLogin(username: String, password: String, callback: @escaping((String, Error?) -> Void)) {
-        Thread.sleep(forTimeInterval: 3.0)
+        Thread.sleep(forTimeInterval: 2.0)
         let task = URLSession.shared.dataTask(with: URL(string: "https://httpbin.org/status/200")!) { data, response, error in
             guard let response = response as? HTTPURLResponse else {
                 return
